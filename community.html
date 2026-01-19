@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EmpowHer Women Community</title>
+  <link rel="stylesheet" href="style.css"> <!-- Assuming shared styles -->
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script> <!-- For real-time chat -->
+  <script src="https://cdn.jsdelivr.net/npm/@emoji-mart/data"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emoji-mart/react@latest/dist/browser.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@emoji-mart/react@latest/css/emoji-mart.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fecfef);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    .disclaimer {
+      background: #ffe6e6;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .verification {
+      margin-bottom: 20px;
+    }
+    .verification input, .verification select {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .verification button {
+      padding: 10px 20px;
+      background: #8f2c24;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .verification button:hover {
+      background: #a0322a;
+    }
+    .chat-container {
+      display: flex;
+      gap: 20px;
+    }
+    .chat-section {
+      flex: 1;
+      display: none; /* Hidden until verified */
+    }
+    .chat-tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .tab {
+      padding: 10px;
+      cursor: pointer;
+      background: #f0f0f0;
+      border-radius: 5px;
+      margin: 0 5px;
+    }
+    .tab.active {
+      background: #8f2c24;
+      color: white;
+    }
+    #chat-messages, #private-messages {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #f9f9f9;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .report-btn {
+      font-size: 12px;
+      color: red;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .input-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #message-input, #private-input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #send-button, #private-send {
+      padding: 10px 20px;
+      background: #8f2c24;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .emoji-btn {
+      padding: 10px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .private-users {
+      margin-bottom: 10px;
+    }
+    .private-users select {
+      padding: 5px;
+      border-radius: 5px;
+    }
+    .back-link {
+      margin-top: 20px;
+      display: inline-block;
+      color: #8f2c24;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>EmpowHer Women Community 👭</h2>
+    <p>A safe, women-only space to chat, share, and discuss your doubts. Only verified women can join.</p>
+
+    <!-- Disclaimer for Work-Related Talks -->
+    <div class="disclaimer">
+      <strong>Important:</strong> All discussions must be work-related (e.g., careers, skills, opportunities). Non-work topics will be moderated. By entering, you agree to this rule. Use the Report button to flag violations.
+    </div>
+
+    <!-- Verification Section -->
+    <div class="verification" id="verification-section">
+      <h3>Verify Your Identity</h3>
+      <p>Please enter your Aadhaar number and confirm your gender. Access is restricted to women only.</p>
+      <input type="text" id="aadhaar-input" placeholder="Enter Aadhaar Number (12 digits)" maxlength="12" pattern="\d{12}">
+      <select id="gender-select">
+        <option value="">Select Gender</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+        <option value="Other">Other</option>
+      </select>
+      <button onclick="verifyUser()">Verify & Enter Chat</button>
+      <p class="error" id="error-message"></p>
+      <small>Note: This is a mock verification. Real Aadhaar checks require secure backend integration.</small>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container" id="chat-container" style="display: none;">
+      <!-- Group Chat -->
+      <div class="chat-section" id="group-chat">
+        <div class="chat-tabs">
+          <div class="tab active" onclick="switchTab('group')">Group Chat</div>
+          <div class="tab" onclick="switchTab('private')">Private Chat</div>
+        </div>
+        <h3>Group Chat (Work-Related Only)</h3>
+        <div id="chat-messages"></div>
+        <div class="input-section">
+          <input type="text" id="message-input" placeholder="Type your work-related message..." onkeypress="handleKeyPress(event, 'group')">
+          <button class="emoji-btn" onclick="openEmojiPicker('group')">😊</button>
+          <button id="send-button" onclick="sendMessage('group')">Send</button>
+        </div>
+      </div>
+
+      <!-- Private Chat -->
+      <div class="chat-section" id="private-chat" style="display: none;">
+        <div class="chat-tabs">
+          <div class="tab" onclick="switchTab('group')">Group Chat</div>
+          <div class="tab active" onclick="switchTab('private')">Private Chat</div>
+        </div>
+        <h3>Private Chat (Work-Related Only)</h3>
+        <div class="private-users">
+          <label>Select a user to chat privately:</label>
+          <select id="private-user-select">
+            <option value="">Choose a user</option>
+            <!-- Mock users; in real app, populate from database -->
+            <option value="User1">User1</option>
+            <option value="User2">User2</option>
+            <option value="User3">User3</option>
+          </select>
+        </div>
+        <div id="private-messages"></div>
+        <div class="input-section">
+          <input type="text" id="private-input" placeholder="Type your private work-related message..." onkeypress="handleKeyPress(event, 'private')">
+          <button class="emoji-btn" onclick="openEmojiPicker('private')">😊</button>
+          <button id="private-send" onclick="sendMessage('private')">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <span class="back-link" onclick="goBack()">Back to Dashboard</span>
+  </div>
+
+  <!-- Emoji Picker (Hidden by default) -->
+  <div id="emoji-picker" style="display: none; position: absolute; z-index: 10;"></div>
+
+  <script>
+    let socket;
+    let isVerified = false;
+    let currentTab = 'group';
+    let emojiPicker;
+
+    // Mock verification function
+    function verifyUser() {
+      const aadhaar = document.getElementById('aadhaar-input').value;
+      const gender = document.getElementById('gender-select').value;
+      const errorMsg = document.getElementById('error-message');
+
+      if (!/^\d{12}$/.test(aadhaar)) {
+        errorMsg.textContent = 'Please enter a valid 12-digit Aadhaar number.';
+        return;
+      }
+      if (!gender) {
+        errorMsg.textContent = 'Please select your gender.';
+        return;
+      }
+      if (gender.toLowerCase() !== 'female') {
+        errorMsg.textContent = 'Access denied: This community is for women only.';
+        return;
+      }
+
+      isVerified = true;
+      document.getElementById('verification-section').style.display = 'none';
+      document.getElementById('chat-container').style.display = 'flex';
+      errorMsg.textContent = '';
+      initChat();
+    }
+
+    // Initialize chat
+    function initChat() {
+      socket = io('http://localhost:3000'); // Assumes server
+      socket.on('message', (data) => {
+        if (data.type === 'group') displayMessage(data, 'chat-messages');
+      });
+      if (!socket.connected) loadLocalMessages('group');
+    }
+
+    // Switch tabs
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('group-chat').style.display = tab === 'group' ? 'block' : 'none';
+      document.getElementById('private-chat').style.display = tab === 'private' ? 'block' : 'none';
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // Send message
+    function sendMessage(type) {
+      const inputId = type === 'group' ? 'message-input' : 'private-input';
+      const input = document.getElementById(inputId);
+      const message = input.value.trim();
+      if (!message) return;
+
+      const data = { user: 'You', message: message, type: type };
+      if (socket && socket.connected) {
+        socket.emit('message', data);
+      } else {
+        saveLocalMessage(data);
+        displayMessage(data, type === 'group' ? 'chat-messages' : 'private-messages');
+      }
+      input.value = '';
+    }
+
+    // Display message
+    function displayMessage(data, containerId) {
+      const messagesDiv = document.getElementById(containerId);
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message';
+      msgDiv.innerHTML = `<strong>${data.user}:</strong> ${data.message} <span class="report-btn" onclick="reportMessage('${data.message}')">Report</span>`;
+      messagesDiv.appendChild(msgDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Report message
+    function reportMessage(message) {
+      console.log('Reported message:', message); // In real app, send to server
+      alert('Message reported for moderation.');
+    }
+
+    // Emoji picker
+    function openEmojiPicker(type) {
+      if (!emojiPicker) {
+        emojiPicker = document.createElement('emoji-picker');
+        document.getElementById('emoji-picker').appendChild(emojiPicker);
+        emojiPicker.addEventListener('emoji-click', (event) => {
+          const inputId = type === 'group' ? 'message-input' : 'private-input';
+          document.getElementById(inputId).value += event.detail.emoji.native;
+          document.getElementById('emoji-picker').style.display = 'none';
+        });
+      }
+      const rect = event.target.getBoundingClientRect();
+      document.getElementById('emoji-picker').style.display = 'block';
+      document.getElementById('emoji-picker').style.left = rect.left + 'px';
+      document.getElementById('emoji-picker').style.top = (rect.bottom + 10) + 'px';
+    }
+
+    // Handle Enter key
+    function handleKeyPress(event, type) {
+      if (event.key === 'Enter') sendMessage(type);
+    }
+
+    // Local storage helpers
+    function saveLocalMessage(data) {
+      const key = data.type === 'group' ? 'groupMessages' : 'privateMessages';
+      const messages = JSON.parse(localStorage.getItem(key) || '[]');
+      messages.push(data);
+      localStorage.setItem(key, JSON.stringify(messages));
+    }
+
+    function loadLocalMessages(type) {
+      const key = type === 'group' ? 'groupMessages' : 'privateMessages';
+      const containerId = type === 'group' ? 'chat-messages' : 'private-messages';
+      const messages = JSON.parse(localStorage.getItem(key) || '[]');
+      messages.forEach(msg => displayMessage(msg, containerId));
+    }
+
+    // Back to dashboard
+    function goBack() {
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+</body>
+</html>

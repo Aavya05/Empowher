@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EmpowHer Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .dashboard {
+      position: relative;
+      z-index: 5;
+      width: 80%;
+      max-width: 900px;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .card {
+      padding: 25px;
+      background: rgba(255,255,255,0.35);
+      border-radius: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      background: rgba(255,255,255,0.5);
+    }
+
+    .card h3 {
+      color: #8f2c24;
+      margin-bottom: 10px;
+    }
+
+    .logout {
+      margin-top: 30px;
+      display: inline-block;
+      color: #8f2c24;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<section>
+
+  <!-- Background -->
+  <img src="bg.jpg" class="bg">
+  <img src="trees.png" class="trees">
+  <img src="girl.png" class="girl">
+
+  <!-- Leaves -->
+  <div class="leaves">
+    <div class="set">
+      <div><img src="leaf_01.png"></div>
+      <div><img src="leaf_02.png"></div>
+      <div><img src="leaf_03.png"></div>
+      <div><img src="leaf_04.png"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <h2>Welcome to EmpowHer 👋</h2>
+    <p>Your safe space to learn, grow, and earn.</p>
+
+    <div class="cards">
+      <div class="card" onclick="goTo('skills')">
+        <h3>🎓 Skill Path</h3>
+        <p>Find skills that match your interests and goals.</p>
+      </div>
+
+      <div class="card" onclick="goTo('chatbot')">
+        <h3>🤖 EmpowHer AI</h3>
+        <p>Ask questions about safety, rights, and careers.</p>
+      </div>
+
+      <div class="card" onclick="goTo('jobs')">
+        <h3>💼 Safe Opportunities</h3>
+        <p>Explore verified jobs and internships.</p>
+      </div>
+
+      <div class="card" onclick="goTo('safety')">
+        <h3>🛡️ Safety & Rights</h3>
+        <p>Know your rights and stay protected.</p>
+      </div>
+
+      <div class="card" onclick="goTo('jobvacancies')">
+        <h3>💼 Job Vacancies for Women</h3>
+        <p>Discover tailored job opportunities for women.</p>
+      </div>
+
+      <div class="card" onclick="goTo('community')">
+        <h3>👥 Women Community</h3>
+        <p>Connect with women worldwide, chat, and discuss your doubts.</p>
+      </div>
+    </div>
+
+    <span class="logout" onclick="logout()">Logout</span>
+  </div>
+
+</section>
+
+<script>
+  function goTo(page) {
+    if (page === "skills") window.location.href = "skills.html";
+    if (page === "chatbot") window.location.href = "chatbot.html";
+    if (page === "jobs") window.location.href = "jobs.html";
+    if (page === "safety") window.location.href = "safety.html";
+    if (page === "jobvacancies") window.location.href = "jobvacancies.html";
+    if (page === "community") window.location.href = "community.html";
+  }
+
+  function logout() {
+    window.location.href = "index.html";
+  }
+</script>
+
+
+</body>
+</html>

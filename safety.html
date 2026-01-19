@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EmpowHer AI – Safety & Legal Support</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      line-height: 1.6;
+      animation: backgroundShift 10s ease-in-out infinite alternate;
+    }
+    @keyframes backgroundShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      animation: fadeInUp 1s ease-out;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .panic-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .panic-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .panic-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    .panic-btn:active {
+      transform: scale(0.95);
+    }
+    .panic-text {
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #666;
+    }
+    .panic-help, .calm-message {
+      background: #ffeaa7;
+      border: 2px solid #d63031;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      animation: slideIn 0.5s ease-out;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .timer-container {
+      background: #ffcccc;
+      border: 2px solid #d63031;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+      animation: slideIn 0.5s ease-out;
+    }
+    .timer {
+      font-size: 2em;
+      font-weight: bold;
+      color: #d63031;
+    }
+    .safe-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .safe-btn:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+    .safe-btn:active {
+      transform: translateY(0);
+    }
+    .page-title {
+      text-align: center;
+      color: #4a4a4a;
+      font-size: 2em;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    .safety-box {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeInUp 1s ease-out;
+      animation-fill-mode: both;
+    }
+    .safety-box:nth-child(1) { animation-delay: 0.1s; }
+    .safety-box:nth-child(2) { animation-delay: 0.2s; }
+    .safety-box:nth-child(3) { animation-delay: 0.3s; }
+    .safety-box:nth-child(4) { animation-delay: 0.4s; }
+    .safety-box:nth-child(5) { animation-delay: 0.5s; }
+    .safety-box:nth-child(6) { animation-delay: 0.6s; }
+    .safety-box:nth-child(7) { animation-delay: 0.7s; }
+    .safety-box:nth-child(8) { animation-delay: 0.8s; }
+    .safety-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .safety-box h2 {
+      cursor: pointer;
+      color: #667eea;
+      margin-bottom: 10px;
+      transition: color 0.3s ease;
+    }
+    .safety-box h2:hover {
+      color: #764ba2;
+    }
+    .collapsible .content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+    .collapsible.active .content {
+      max-height: 500px;
+    }
+    .input-box {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-size: 1em;
+      transition: border-color 0.3s ease;
+    }
+    .input-box:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+    .btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .btn:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+    .alert {
+      color: #d63031;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #f093fb;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s ease;
+    }
+    .back-btn:hover {
+      background: #e84393;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+      color: #667eea;
+    }
+    .progress-bar {
+      width: 0%;
+      height: 5px;
+      background: #667eea;
+      transition: width 2s ease;
+    }
+    @media (max-width: 768px) {
+      .container { padding: 10px; }
+      .page-title { font-size: 1.5em; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- PANIC BUTTON -->
+    <div class="panic-container">
+      <button class="panic-btn" onclick="activatePanic()">
+        🚨 PANIC BUTTON
+      </button>
+      <p class="panic-text">
+        Press only if you feel unsafe or threatened
+      </p>
+    </div>
+
+    <!-- PANIC HELP -->
+    <div id="panicHelp" class="panic-help" style="display:none;">
+      <h2>🆘 Immediate Help</h2>
+      <ul>
+        <li>📞 <b>Emergency:</b> 112</li>
+        <li>👩 <b>Women Helpline:</b> 1091</li>
+        <li>💻 <b>Cyber Crime:</b> 1930</li>
+      </ul>
+      <p class="alert">You are not alone. Help is available.</p>
+    </div>
+
+    <!-- CALM MESSAGE -->
+    <div id="calmMessage" class="calm-message" style="display:none;">
+      🧘‍♀️ <b>Stay calm.</b> Take a deep breath.  
+      Reach out to a trusted person nearby.
+    </div>
+
+    <!-- TIMER CONTAINER -->
+    <div id="timerContainer" class="timer-container" style="display:none;">
+      <p><b>Are you safe?</b> Click "I am safe" below to cancel the alert.</p>
+      <p>Time remaining: <span id="timer" class="timer">10</span> seconds</p>
+      <button onclick="checkSafeResponse()" class="safe-btn">I am safe</button>
+      <p id="locationStatus" class="alert"></p>
+      <p id="countdownAlert" class="alert" style="display:none;">⚠️ Alert: If you don't confirm safety, emergency services will be contacted automatically!</p>
+    </div>
+
+    <h1 class="page-title">🛡️ EmpowHer AI – Safety & Legal Awareness</h1>
+
+    <!-- EMERGENCY -->
+    <div class="safety-box emergency">
+      <h2>🚨 Emergency Help</h2>
+      <p>If you are in immediate danger, contact:</p>
+      <ul>
+        <li><b>Police:</b> 112</li>
+        <li><b>Women Helpline:</b> 1091</li>
+        <li><b>Cyber Crime:</b> 1930</li>
+      </ul>
+      <p class="alert">Your safety comes first. Trust your instincts.</p>
+    </div>
+
+    <!-- SCAMS (COLLAPSIBLE) -->
+    <div class="safety-box collapsible">
+      <h2 onclick="toggleCard(this)">⚠️ Common Job & Online Scams</h2>
+      <div class="content">
+        <ul>
+          <li>❌ Asking for registration or training fees</li>
+          <li>❌ High salary with no interview</li>
+          <li>❌ Asking for documents early</li>
+          <li>❌ Telegram / WhatsApp only communication</li>
+        </ul>
+        <p class="alert">Never pay money to get a job.</p>
+      </div>
+    </div>
+
+    <!-- FAKE JOB SCAM CHECKER -->
+    <div class="safety-box ai-box">
+      <h2>🕵️ Fake Job Scam Checker</h2>
+
+      <input
+        type="text"
+        id="jobInput"
+        placeholder="Paste job message or offer here..."
+        class="input-box"
+      />
+
+      <button onclick="checkScam()" class="btn">
+        Check Safety
+      </button>
+
+      <div class="loading" id="loading">
+        <p>Analyzing... Please wait.</p>
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <p id="scamResult" class="alert"></p>
+    </div>
+
+    <!-- LEGAL RIGHTS -->
+    <div class="safety-box">
+      <h2>⚖️ Women’s Legal Rights (Simple)</h2>
+      <ul>
+        <li><b>POSH Act:</b> Protection against workplace harassment</li>
+        <li><b>Equal Pay:</b> Same salary for same work</li>
+        <li><b>Maternity Rights:</b> Paid maternity leave</li>
+        <li><b>Cyber Laws:</b> Online harassment is a crime</li>
+      </ul>
+      <p>You deserve respect and safety at work.</p>
+    </div>
+
+    <!-- WORKPLACE SAFETY -->
+    <div class="safety-box">
+      <h2>🏢 Workplace Safety</h2>
+      <ul>
+        <li>🚩 Being forced to stay late alone</li>
+        <li>🚩 Personal questions unrelated to work</li>
+        <li>🚩 Threats or pressure</li>
+      </ul>
+      <p><b>Action:</b> Document → Report → Seek help</p>
+    </div>
+
+    <!-- ONLINE SAFETY -->
+    <div class="safety-box">
+      <h2>🌐 Online Safety Tips</h2>
+      <ul>
+        <li>🔐 Keep social profiles private</li>
+        <li>🔐 Never share OTPs or passwords</li>
+        <li>🔐 Use verified job & freelancing platforms</li>
+      </ul>
+    </div>
+
+    <!-- AI SUPPORT -->
+    <div class="safety-box ai-box">
+      <h2>🤖 Ask EmpowHer AI</h2>
+      <ul>
+        <li>Is this job offer safe?</li>
+        <li>What should I do if I feel unsafe?</li>
+        <li>How do I report harassment?</li>
+      </ul>
+      <a href="chatbot.html" class="btn">Talk to EmpowHer AI</a>
+    </div>
+
+    <a href="dashboard.html" class="back-btn">⬅ Back to Dashboard</a>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    let countdownInterval;
+    let locationSent = false;
+
+    function activatePanic() {
+      document.getElementById("panicHelp").style.display = "block";
+      document.getElementById("calmMessage").style.display = "block";
+      document.getElementById("timerContainer").style.display = "block";
+      document.getElementById("countdownAlert").style.display = "block"; // Show alert in countdown
+
+      // Add vibration if supported
+      if (navigator.vibrate) {
+        navigator.vibrate(500);
+      }
+
+      // Get location and "send" to police
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const locationMsg = `Location sent to police: Latitude ${lat}, Longitude ${lon}`;
+            console.log(locationMsg); // In real app, send to backend/police API
+            document.getElementById("locationStatus").innerText = locationMsg;
+            locationSent = true;
+            // Simulate sending: In production, integrate with emergency services API
+          },
+          () => {
+            document.getElementById("locationStatus").innerText = "Location access denied. Unable to send location to police.";
+          }
+        );
+      } else {
+        document.getElementById("locationStatus").innerText = "Geolocation not supported. Unable to send location.";
+      }
+
+      // Start 10-second countdown
+      let timeLeft = 10;
+      document.getElementById("timer").innerText = timeLeft;
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(countdownInterval);
+          callPolice();
+        }
+      }, 1000);
+
+      alert("Stay calm. If you are in danger, call 112 immediately. Location is being sent to police.");
+    }
+
+    function checkSafeResponse() {
+      clearInterval(countdownInterval);
+      document.getElementById("timerContainer").style.display = "none";
+      alert("Alert cancelled. Stay safe!");
+    }
+
+    function callPolice() {
+      // Automatically open dialer for 112
+      window.location.href = "tel:112";
+      alert("Calling police now...");
+    }
+
+    function toggleCard(header) {
+      header.parentElement.classList.toggle("active");
+    }
+
+    function checkScam() {
+      const text = document.getElementById("jobInput").value.toLowerCase();
+      const result = document.getElementById("scamResult");
+      const loading = document.getElementById("loading");
+      const progressBar = document.getElementById("progressBar");
+
+      if (!text) {
+        result.innerText = "Please paste a job message to check.";
+        return;
+      }
+
+      // Show loading
+      loading.style.display = "block";
+      result.innerText = "";
+      progressBar.style.width = "0%";
+
+      // Simulate progress
+      setTimeout(() => progressBar.style.width = "50%", 500);
+      setTimeout(() => progressBar.style.width = "100%", 1000);
+
+      setTimeout(() => {
+        loading.style.display = "none";
+        const redFlags = [
+          "fee",
+          "registration",
+          "telegram",
+          "whatsapp",
+          "no interview",
+          "guaranteed job",
+          "pay first",
+          "training fee"
+        ];
+
+        const found = redFlags.some(flag => text.includes(flag));
+
+        if (found) {
+          result.innerText =
+            "⚠️ Warning: This job offer looks suspicious. Never pay money or share personal details.";
+        } else {
+          result.innerText =
+            "✅ This looks safer, but always verify the company before applying.";
+        }
+      }, 2000); // 2-second delay for realism
+    }
+  </script>
+</body>
+</html>

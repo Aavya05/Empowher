@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Vacancies for Women - EmpowHer</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #8f2c24;
+      margin-bottom: 20px;
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      width: 220px;
+      font-size: 16px;
+    }
+
+    .search-bar button {
+      padding: 10px 22px;
+      background-color: #8f2c24;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .jobs-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .job-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .job-card h3 {
+      color: #8f2c24;
+      margin-bottom: 10px;
+    }
+
+    .apply-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 14px;
+      background-color: #8f2c24;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .back-btn {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+      color: #8f2c24;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      color: #8f2c24;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Job Vacancies for Women</h1>
+
+  <p style="text-align:center;">
+    Explore tailored job opportunities across various fields.
+  </p>
+
+  <div class="search-bar">
+    <input id="role-search" placeholder="Role (e.g. Software Engineer)">
+    <input id="location-search" placeholder="Location (e.g. India)">
+    <button onclick="filterJobs()">Search</button>
+  </div>
+
+  <div class="jobs-container" id="jobs-container"></div>
+
+  <span class="back-btn" onclick="goBack()">Back to Dashboard</span>
+</div>
+
+<script>
+  const RAPID_API_KEY = "a1522ab829mshc11e3336bcc744ap1086fbjsn8ed0f732558e";
+
+  const fallbackJobs = [
+    {
+      job_title: "Software Engineer",
+      employer_name: "TechWomen Inc.",
+      job_city: "Bangalore",
+      job_country: "India",
+      job_description: "Develop scalable applications in women-led teams.",
+      job_apply_link: "#"
+    },
+    {
+      job_title: "HR Manager",
+      employer_name: "Empower Corp",
+      job_city: "Delhi",
+      job_country: "India",
+      job_description: "Manage hiring and employee engagement.",
+      job_apply_link: "#"
+    },
+    {
+      job_title: "Marketing Specialist",
+      employer_name: "WomenFirst Ltd.",
+      job_city: "Mumbai",
+      job_country: "India",
+      job_description: "Drive marketing campaigns focused on women's empowerment.",
+      job_apply_link: "#"
+    },
+    {
+      job_title: "Data Analyst",
+      employer_name: "InsightWomen",
+      job_city: "Pune",
+      job_country: "India",
+      job_description: "Analyze data to support business decisions in a supportive environment.",
+      job_apply_link: "#"
+    }
+  ];
+
+  let isLoading = false;
+
+  // Load fallback jobs on page load
+  window.onload = function() {
+    displayJobs(fallbackJobs);
+  };
+
+  async function filterJobs() {
+    if (isLoading) return; // Prevent multiple simultaneous requests
+    isLoading = true;
+
+    const container = document.getElementById("jobs-container");
+    container.innerHTML = '<div class="loading">Loading jobs...</div>';
+
+    const role = document.getElementById("role-search").value.trim() || "software engineer";
+    const location = document.getElementById("location-search").value.trim() || "India";
+
+    const url = `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(role)}&location=${encodeURIComponent(location)}&page=1&num_pages=1`;
+
+    try {
+      console.log("Fetching jobs for:", role, location);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "X-RapidAPI-Key": RAPID_API_KEY,
+          "X-RapidAPI-Host": "jsearch.p.rapidapi.com"
+        }
+      });
+
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+      const data = await response.json();
+      console.log("API response:", data);
+      if (data.data && data.data.length > 0) {
+        displayJobs(data.data);
+      } else {
+        displayJobs(fallbackJobs);
+        alert("No jobs found for your search. Showing sample jobs instead.");
+      }
+
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+      alert("API failed. Showing sample jobs.");
+      displayJobs(fallbackJobs);
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  function displayJobs(jobList) {
+    const container = document.getElementById("jobs-container");
+    container.innerHTML = "";
+
+    if (!jobList || jobList.length === 0) {
+      container.innerHTML = "<p>No jobs found. Try adjusting your search.</p>";
+      return;
+    }
+
+    jobList.forEach(job => {
+      const card = document.createElement("div");
+      card.className = "job-card";
+
+      const title = job.job_title || "N/A";
+      const company = job.employer_name || "N/A";
+      const city = job.job_city || "";
+      const country = job.job_country || "";
+      const description = (job.job_description || "").slice(0, 120) + "...";
+      const link = job.job_apply_link || "#";
+
+      card.innerHTML = `
+        <h3>${title}</h3>
+        <p><strong>Company:</strong> ${company}</p>
+        <p><strong>Location:</strong> ${city} ${country}</p>
+        <p>${description}</p>
+        <a href="${link}" target="_blank" class="apply-btn">Apply Now</a>
+      `;
+
+      container.appendChild(card);
+    });
+  }
+
+  function goBack() {
+    window.location.href = "dashboard.html";
+  }
+</script>
+
+</body>
+</html>
+

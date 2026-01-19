@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmpowHer-AI Chatbot</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+    .chat-container {
+      width: 90%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 1s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    header {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5em;
+    }
+    .chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      max-height: 400px;
+      scroll-behavior: smooth;
+    }
+    .message {
+      margin-bottom: 10px;
+      padding: 10px 15px;
+      border-radius: 20px;
+      max-width: 70%;
+      word-wrap: break-word;
+      animation: slideIn 0.5s ease-out;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .user-message {
+      background: #667eea;
+      color: white;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+    .bot-message {
+      background: #f9f9f9;
+      color: #333;
+      align-self: flex-start;
+    }
+    .typing-indicator {
+      display: none;
+      font-style: italic;
+      color: #666;
+      padding: 10px 15px;
+    }
+    .input-area {
+      display: flex;
+      padding: 15px;
+      background: #f0f0f0;
+      border-top: 1px solid #ddd;
+    }
+    #user-input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      outline: none;
+      font-size: 1em;
+    }
+    #send-btn {
+      margin-left: 10px;
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #send-btn:hover {
+      background: #5a67d8;
+    }
+    #send-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <header>
+      <h1>EmpowHer-AI Chatbot 🤖</h1>
+    </header>
+
+    <div id="chat-box" class="chat-box">
+      <div class="message bot-message">Hello! I'm EmpowHer-AI, your friendly guide to empowering yourself. As a woman-focused AI, I'm here to help you with skills, safe jobs, safety tips, and more. What can I assist you with today? For example, ask about skills in technology, business, or how to stay safe online! 💪</div>
+    </div>
+
+    <div class="typing-indicator" id="typing">EmpowHer-AI is typing...</div>
+
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Type your message...">
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const typingIndicator = document.getElementById('typing');
+    
+let userContext = {
+  interest: null,
+  skillLevel: null,
+  concern: null
+};
+
+
+
+    // Expanded bot responses with accurate, empowering answers (female perspective)
+    const responses = {
+  // Greetings
+  'hi': 'Hi 👋 I’m EmpowHer-AI. I’m here to help women with skills, safe jobs, legal rights, and online safety. What would you like help with today?',
+  'hello': 'Hello 🌸 You’re safe here. Tell me—skills, jobs, safety, or legal help?',
+  'hey': 'Hey! 💖 Ready to grow your skills or find safe opportunities?',
+
+  // Skills – General
+  'skills': 'Great choice! 🌱 Skills open safe opportunities. Are you interested in technology, creative work, communication, business, or healthcare?',
+  'skill guidance': 'I can guide you step-by-step. Tell me your interest and whether you’re a beginner or already skilled.',
+
+  // Technology
+  'technology': '💻 Technology is one of the safest remote fields for women. Popular paths: Web Development, Data Analysis, QA Testing, UI/UX. Are you a beginner?',
+  'coding': 'Coding basics usually take 3–6 months. Start with HTML → CSS → JavaScript. Python is great for beginners too.',
+  'work from home': 'Yes ✅ Many tech and creative roles are remote. Always use verified platforms like LinkedIn, Internshala, Upwork.',
+
+  // Creative
+  'creative': '🎨 Creative careers include graphic design, content writing, video editing, UI design. These are freelancing-friendly and flexible.',
+  'freelancing': 'Freelancing tips: take advance payment, use contracts, avoid WhatsApp-only clients. Want safe platforms?',
+  'canva': 'Canva is beginner-friendly and great for design freelancing. Pair it with basic branding skills.',
+
+  // Communication
+  'communication': '📢 Communication skills help in HR, customer support, training, management. Confidence grows with practice.',
+  'interview': 'Interview tip: Never tolerate personal questions unrelated to the job. That’s a red flag 🚩',
+
+  // Business
+  'business': '📊 Starting a business? Learn digital marketing, finance basics, branding. Always verify GST and payment gateways.',
+  'startup': 'Small businesses grow safely when you avoid upfront investments and online payment fraud.',
+
+  // Healthcare & Teaching
+  'healthcare': '🏥 Healthcare roles like nursing, counselling, tutoring are high-trust careers. Verify institute accreditation.',
+  'teaching': 'Teaching and tutoring are safe options, especially online platforms with background checks.',
+
+  // Jobs
+  'job': 'Looking for jobs? I can suggest safe roles based on your skills. Tell me your background.',
+  'safe job': 'Safe jobs usually: no fees, official email, interview process, company website, LinkedIn presence.',
+  'salary': 'If a job promises very high salary without interview → it’s likely a scam.',
+
+  // Scams
+  'scam': '🚨 Scam signs: registration fees, Telegram-only chats, asking for documents early. Never pay to get a job.',
+  'fraud': 'If you suspect fraud, report to Cyber Crime Helpline **1930** immediately.',
+  'otp': 'Never share OTP, passwords, or bank details. No real employer will ask for them.',
+
+  // Safety
+  'safety': '🛡️ Your safety matters. Online: private profiles. Workplace: report harassment. Emergency numbers are available.',
+  'harassment': 'Workplace harassment is illegal under POSH Act. Document incidents and report to Internal Committee.',
+  'unsafe': 'If you feel unsafe right now, please contact **112** or **1091 (Women Helpline)** immediately.',
+
+  // Legal
+  'legal': '⚖️ Women’s rights include equal pay, maternity leave, protection from harassment, cyber safety laws.',
+  'posh': 'POSH Act protects women from workplace harassment. Every company must have an Internal Committee.',
+  'maternity': 'Maternity Benefit Act provides paid maternity leave and job protection.',
+
+  // Empowerment
+  'confidence': 'Confidence grows with skills, safe environments, and self-respect. You deserve safe growth 🌸',
+  'empower': 'Empowerment = skills + safety + awareness. I’m proud of you for taking this step 💪',
+
+  // Default
+  'default': 'I’m here to support you 🌼 Ask me about skills, jobs, scams, safety, or women’s legal rights.'
+};
+
+
+    function getBotResponse(message) {
+  const lowerMsg = message.toLowerCase();
+
+  // Detect interest
+  if (lowerMsg.includes('tech') || lowerMsg.includes('coding')) {
+    userContext.interest = 'technology';
+  }
+  if (lowerMsg.includes('creative') || lowerMsg.includes('design')) {
+    userContext.interest = 'creative';
+  }
+  if (lowerMsg.includes('scam') || lowerMsg.includes('fraud')) {
+    userContext.concern = 'scam';
+  }
+
+  // Match responses
+  for (const key in responses) {
+    if (lowerMsg.includes(key)) {
+      return responses[key];
+    }
+  }
+
+  // Contextual follow-ups
+  if (userContext.interest === 'technology') {
+    return 'Since you’re interested in technology 💻, would you like beginner resources or job guidance?';
+  }
+
+  if (userContext.concern === 'scam') {
+    return 'If you’ve received a suspicious message, don’t respond or pay. Want me to check it for you?';
+  }
+
+  return responses['default'];
+}
+
+
+    function addMessage(content, className) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${className}`;
+      messageDiv.textContent = content;
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+    }
+
+    function showTyping() {
+      typingIndicator.style.display = 'block';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function hideTyping() {
+      typingIndicator.style.display = 'none';
+    }
+
+    function sendMessage() {
+      const message = userInput.value.trim();
+      if (message) {
+        addMessage(message, 'user-message');
+        userInput.value = '';
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          const botReply = getBotResponse(message);
+          addMessage(botReply, 'bot-message');
+        }, 1000 + Math.random() * 1000); // Random delay for realism
+      }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+
+    // Initial focus
+    userInput.focus();
+  </script>
+</body>
+</html>
